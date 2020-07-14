@@ -40,40 +40,41 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print("Reading {}...".format(args.inputdir))
     # Do what you need to read the documents here.
-    list_of_authors = glob.glob("{}/*".format(args.inputdir)) #mappe
-    # print(inputdir)
+    list_of_authors = glob.glob("{}/*".format(args.inputdir)) 
     author_files = [glob.glob("{}/*".format(author)) for author in list_of_authors]
     flat_author_list = [a.split('/')[-1] for a in list_of_authors]
-    # print(flat_author_list)
-    # print(list_of_authors)
+
+
+
     def train_author(author, dims, testsize):
         author_list = list()
         i = 0
         for author in author_files:
-       
+                    #Grab files and content
             local_vocab = list()
             author_list.append(author)
             for file in author:
                 vocab = ''
                 with open(file, "r") as myfile:
                     content = myfile.readlines()
-                    # print(content)
-                    # break
+                    #Tokenize and filter words for non-words, lowercasing
                     for line in content:
-                        # print(line)   
+
                         for word in line.split():
-                            # print(word)
+
                             if word.isalpha():
                                 word = word.lower()
                                 vocab = word
-                        local_vocab.append(vocab)
-            # print(local_vocab)
+                    #Collect items into vocabulary
+                        local_vocab.append(vocab) 
+
 
                               
                
 
 
-        # vectorize each file to the global vocab
+                    # vectorize each file to the global vocab
+
             # print(author)
             vectorizer = CountVectorizer()
             X = vectorizer.fit_transform(local_vocab)
@@ -89,67 +90,44 @@ if __name__ == "__main__":
                       
                         
 
-                    # set into DF for fitting size
-                    # print(author_list)
-                    # flat_author_list = [a.split('/')[1] for au in author_list for a in au]
-                    # print(flat_author_list)
+                    
 
-                    #working
+            # print(author_list)
+            # flat_author_list = [a.split('/')[1] for au in author_list for a in au]
+            # print(flat_author_list)
 
+            #working
 
-
-
-            test = reduced_dims[:proportion_lenght]
-            train = reduced_dims[proportion_lenght:]
-
-            train_labeled = pd.DataFrame(data=train, index = ["train"]*len(train))
-            test_labeled = pd.DataFrame(data=test, index = ["test"]*len(test))
+                     # set into DF for fitting size
 
 
+            test_length = reduced_dims[:proportion_lenght]
+            train_length = reduced_dims[proportion_lenght:]
+
+            train_data = pd.DataFrame(data=train_length, index = ["train"]*len(train_length))
+            test_data = pd.DataFrame(data=test_length, index = ["test"]*len(test_length))
 
 
-            f = pd.concat([train_labeled, test_labeled],axis=0)
 
-            f.insert(0,"author", flat_author_list[i])  ### here's the error about -- the names is from a list, so i can either get the whole list or a index of it ... 
+
+            df = pd.concat([train_data, test_data],axis=0)
+
+            df.insert(0,"author", flat_author_list[i])  ### here's the error about -- the names is from a list, so i can either get the whole list or a index of it ... 
                 # print(f)
             i = i + 1
 
-        return f
+        return df
 
-    # print(flat_author_list[0], flat_author_list[1])
+
+
+
     t = [train_author(author, args.dims, args.testsize) for author in flat_author_list]
     print(t)
 
-    # second test / type script
-
-
-    # test_data = df.sample(frac=proportion_lenght, replace=True)
-
-    # train_data = df.drop(test_data.index)
-
-    # train_data.insert(0, "Train Data", (len(train_data)*["Train"]))
-    # test_data.insert(0, "Test Data", (len(test_data)*["Test"]))
-
-    # df = train_data.append(test_data)
-    # df.reset_index(inplace=True, drop=True)
-
-
-    # print(df)
-
-
-
-    # third take 
-
-    # df = pd.DataFrame(data=reduced_dims)
-    # print(df)
-
-    # df.insert(0, "Author", [flat_author_list]*len(df))
-    # print(list_of_authors)
-    # print(df)
-
-    # g = pd.DataFrame(t)
-    # print(g)
-    # g.to_csv(args.outputfile)
+    
+    g = pd.DataFrame(t)
+    print(g)
+    g.to_csv(args.outputfile)
 
     
     print("Writing to {}...".format(args.outputfile))
