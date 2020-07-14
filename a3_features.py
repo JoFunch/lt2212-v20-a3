@@ -121,13 +121,13 @@ if __name__ == "__main__":
 
 
 
-    t = [train_author(author, args.dims, args.testsize) for author in flat_author_list]
-    print(t)
+    collected_author_train = [train_author(author, args.dims, args.testsize) for author in flat_author_list]
+
 
     
-    g = pd.DataFrame(t)
-    print(g)
-    g.to_csv(args.outputfile)
+    list_to_dataframe = pd.DataFrame(collected_author_train)
+    # print(list_to_dataframe)
+    list_to_dataframe.to_csv(args.outputfile)
 
     
     print("Writing to {}...".format(args.outputfile))
